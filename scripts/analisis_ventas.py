@@ -3,31 +3,41 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Leer archivo CSV
-datos = pd.read_csv("datos/ventas.csv")
+df = pd.read_csv("datos/ventas.csv")
 
 # Crear columna total
-datos["total"] = datos["cantidad"] * datos["precio"]
+df["total"] = df["cantidad"] * df["precio"]
 
-# Calcular ventas totales
-ventas_totales = datos["total"].sum()
+# Ventas totales
+ventas_totales = df["total"].sum()
 
 # Producto más vendido
-producto_mas_vendido = datos.groupby("producto")["cantidad"].sum().idxmax()
+producto_mas_vendido = df.groupby("producto")["cantidad"].sum().idxmax()
+
+# Convertir fecha
+df["fecha"] = pd.to_datetime(df["fecha"])
+
+# Crear columna mes
+df["mes"] = df["fecha"].dt.month
+
+# Ventas por mes
+ventas_por_mes = df.groupby("mes")["total"].sum()
 
 # Mostrar resultados
 print("Ventas totales:", ventas_totales)
 print("Producto más vendido:", producto_mas_vendido)
 
-# Ventas por producto
-ventas_producto = datos.groupby("producto")["total"].sum()
+print("\nVentas por mes:")
+print(ventas_por_mes)
 
 # Crear gráfico
-ventas_producto.plot(kind="bar")
+ventas_por_mes.plot(kind="bar")
 
-# Título
-plt.title("Ventas por producto")
+plt.title("Ventas por Mes")
+plt.xlabel("Mes")
+plt.ylabel("Ventas")
 
 # Guardar gráfico
 plt.savefig("resultados/grafico_ventas.png")
 
-print("Gráfico guardado en resultados/")
+print("\nGráfico guardado en resultados/")
